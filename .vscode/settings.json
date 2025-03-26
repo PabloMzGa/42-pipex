@@ -1,0 +1,20 @@
+{
+	"files.associations": {
+		"lodepng.h": "c",
+		"mlx42_int.h": "c",
+		"libft.h": "c",
+		"fdf.h": "c",
+		"stdio.h": "c",
+		"mlx42.h": "c",
+		"fcntl.h": "c",
+		"ft_printf.h": "c",
+		"limits.h": "c",
+		"ft_get_next_line.h": "c",
+		"random": "c",
+		"limits": "c",
+		"array": "c",
+		"string_view": "c",
+		"initializer_list": "c",
+		"type_traits": "c"
+	}
+}
