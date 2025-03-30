@@ -6,7 +6,7 @@
 /*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 19:57:48 by pabmart2          #+#    #+#             */
-/*   Updated: 2025/03/13 20:24:14 by pablo            ###   ########.fr       */
+/*   Updated: 2025/03/29 16:35:43 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,6 @@ int	di_printer(va_list arg)
 	str = ft_itoa(va_arg(arg, int));
 	ft_putstr_fd(str, 1);
 	len = ft_strlen(str);
-	free(str);
+	ft_free((void **)&str);
 	return (len);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_matrix_free.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/07 13:17:34 by pablo             #+#    #+#             */
-/*   Updated: 2025/03/14 17:36:59 by pabmart2         ###   ########.fr       */
+/*   Updated: 2025/03/29 16:36:19 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	ft_matrix_free(void **array, size_t size)
 	{
 		while (i < size)
 		{
-			free(array[i]);
+			ft_free((void **)&array[i]);
 			++i;
 		}
 	}
@@ -29,9 +29,9 @@ void	ft_matrix_free(void **array, size_t size)
 	{
 		while (array[i])
 		{
-			free(array[i]);
+			ft_free((void **)&array[i]);
 			++i;
 		}
 	}
-	free(array);
+	ft_free((void **)&array);
 }

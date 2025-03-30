@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_get_next_line.h                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 13:46:34 by pabmart2          #+#    #+#             */
-/*   Updated: 2025/03/14 16:35:57 by pabmart2         ###   ########.fr       */
+/*   Updated: 2025/03/29 14:18:42 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void	*ft_memset(void *s, int c, size_t n);
 char	*ft_strndup(const char *s, size_t n);
 
 /**
- * Appends the string pointed to by `src` to the end of the string pointed to
+ * Appends the string pointed by `src` to the end of the string pointed to
  * by `dst`. It will append at most `size - strlen(dst) - 1` characters,
  * null-terminating the result.
  *

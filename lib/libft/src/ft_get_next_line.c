@@ -6,7 +6,7 @@
 /*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 13:46:34 by pabmart2          #+#    #+#             */
-/*   Updated: 2025/03/13 20:22:43 by pablo            ###   ########.fr       */
+/*   Updated: 2025/03/29 16:36:16 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static char	*get_new_buffer(char *old_buffer)
 	char	*buffer;
 
 	if (old_buffer)
-		free(old_buffer);
+		ft_free((void **)&old_buffer);
 	buffer = malloc(BUFFER_SIZE + 1);
 	if (!buffer)
 		return (NULL);
@@ -62,15 +62,15 @@ static char	*process_line(int fd, char *buffer, char **aux_buffer)
 	read_code = read(fd, buffer, BUFFER_SIZE);
 	if (read_code < 1)
 	{
-		free(buffer);
+		ft_free((void **)&buffer);
 		if (read_code == 0 && *aux_buffer && **aux_buffer)
 		{
 			tmp_buffer = ft_strndup(*aux_buffer, 0);
-			free(*aux_buffer);
+			ft_free((void **)&*aux_buffer);
 			*aux_buffer = NULL;
 			return (tmp_buffer);
 		}
-		free(*aux_buffer);
+		ft_free((void **)&*aux_buffer);
 		*aux_buffer = NULL;
 		return (NULL);
 	}
@@ -78,7 +78,7 @@ static char	*process_line(int fd, char *buffer, char **aux_buffer)
 	{
 		tmp_buffer = buffer;
 		buffer = ft_strjoin(*aux_buffer, buffer);
-		free(tmp_buffer);
+		ft_free((void **)&tmp_buffer);
 	}
 	return (search_nl(fd, buffer, aux_buffer));
 }
@@ -110,7 +110,7 @@ static char	*keep_searching_nl(int fd, char *buffer, char **aux_buffer)
 		tmp_buffer = *aux_buffer;
 		*aux_buffer = ft_strndup(buffer, 0);
 		if (tmp_buffer)
-			free(tmp_buffer);
+			ft_free((void **)&tmp_buffer);
 	}
 	return (process_line(fd, get_new_buffer(buffer), aux_buffer));
 }
@@ -141,10 +141,10 @@ static char	*search_nl(int fd, char *buffer, char **aux_buffer)
 	{
 		buffer_nl_size = ft_strchr(buffer, '\n') - buffer + 1;
 		if (*aux_buffer)
-			free(*aux_buffer);
+			ft_free((void **)&*aux_buffer);
 		*aux_buffer = ft_strndup(buffer + buffer_nl_size, 0);
 		tmp_buffer = ft_strndup(buffer, buffer_nl_size + 1);
-		free(buffer);
+		ft_free((void **)&buffer);
 		return (tmp_buffer);
 	}
 	else
@@ -166,7 +166,7 @@ char	*ft_get_next_line(int fd)
 		rtn_buffer = ft_strndup(aux_buffer, nl_pos + 1);
 		buffer = aux_buffer;
 		aux_buffer = ft_strndup(aux_buffer + nl_pos, 0);
-		free(buffer);
+		ft_free((void **)&buffer);
 		return (rtn_buffer);
 	}
 	rtn_buffer = process_line(fd, get_new_buffer(NULL), &aux_buffer);

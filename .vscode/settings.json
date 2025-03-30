@@ -15,6 +15,7 @@
 		"array": "c",
 		"string_view": "c",
 		"initializer_list": "c",
-		"type_traits": "c"
+		"type_traits": "c",
+		"string.h": "c"
 	}
 }

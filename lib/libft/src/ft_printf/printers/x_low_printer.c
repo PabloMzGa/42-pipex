@@ -6,7 +6,7 @@
 /*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 21:08:11 by pabmart2          #+#    #+#             */
-/*   Updated: 2025/03/13 20:24:14 by pablo            ###   ########.fr       */
+/*   Updated: 2025/03/29 16:35:51 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,6 @@ int	x_low_printer(va_list arg)
 	str = ft_uitob(un, "0123456789abcdef");
 	ft_putstr_fd(str, 1);
 	len = ft_strlen(str);
-	free(str);
+	ft_free((void **)&str);
 	return (len);
 }

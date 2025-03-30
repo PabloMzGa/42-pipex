@@ -1,27 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   x_up_printer.c                                     :+:      :+:    :+:   */
+/*   ft_errfree.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/25 21:08:11 by pabmart2          #+#    #+#             */
-/*   Updated: 2025/03/29 16:35:53 by pablo            ###   ########.fr       */
+/*   Created: 2025/03/28 17:38:43 by pablo             #+#    #+#             */
+/*   Updated: 2025/03/29 15:05:42 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+#include "libft.h"
 
-int	x_up_printer(va_list arg)
+void ft_errfree(char *msg, char err, char exit, void **ptr)
 {
-	char			*str;
-	unsigned int	un;
-	size_t			len;
-
-	un = (unsigned int)va_arg(arg, int);
-	str = ft_uitob(un, "0123456789ABCDEF");
-	ft_putstr_fd(str, 1);
-	len = ft_strlen(str);
-	ft_free((void **)&str);
-	return (len);
+	ft_free((void *)ptr);
+	ft_perror(msg, err, exit);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strchrm.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 13:06:55 by pabmart2          #+#    #+#             */
-/*   Updated: 2025/03/14 17:37:15 by pabmart2         ###   ########.fr       */
+/*   Updated: 2025/03/29 16:35:33 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,10 @@ char	*ft_strchrm(const char *s, char *c)
 	while (*s)
 	{
 		if (ft_strchr((const char *)uc, *s))
-			return (free(uc), (char *)s);
+			return (ft_free((void **)&uc), (char *)s);
 		s++;
 	}
 	if (*uc == '\0')
-		return (free(uc), (char *)s);
-	return (free(uc), NULL);
+		return (ft_free((void **)&uc), (char *)s);
+	return (ft_free((void **)&uc), NULL);
 }

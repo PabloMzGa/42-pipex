@@ -6,7 +6,7 @@
 /*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 18:17:00 by pabmart2          #+#    #+#             */
-/*   Updated: 2025/03/22 13:57:26 by pablo            ###   ########.fr       */
+/*   Updated: 2025/03/29 15:07:16 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,34 @@ void				ft_bzero(void *s, size_t n);
  * @note If memory allocation fails, errno is set to ENOMEM.
  */
 void				*ft_calloc(size_t nmemb, size_t size);
+
+/**
+ * @brief Frees the memory pointed to by the given pointer and sets it to NULL.
+ *
+ * This function takes a double pointer to a memory location, frees the memory
+ * it points to, and then sets the pointer to NULL to avoid dangling pointers.
+ *
+ * @param ptr A double pointer to the memory to be freed. The pointer itself
+ *            must not be NULL, but the memory it points to can be NULL.
+ *
+ * @note It is the caller's responsibility to ensure that the pointer passed
+ *       to this function was allocated dynamically (e.g., using malloc, calloc,
+ *       or realloc).
+ */
+void ft_free(void **ptr);
+
+/**
+ * @brief Frees a pointer, prints an error message, and optionally exits.
+ *
+ * Frees a dynamically allocated pointer, prints an error message, and
+ * optionally terminates the program.
+ *
+ * @param msg Error message to be printed.
+ * @param err Error code for the message.
+ * @param exit Non-zero to terminate the program.
+ * @param ptr Double pointer to the memory to free.
+ */
+void ft_errfree(char *msg, char err, char exit, void **ptr);
 
 /**
  * @brief Retrieves the value of an environment variable.

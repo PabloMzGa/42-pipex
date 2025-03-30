@@ -6,7 +6,7 @@
 /*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 18:26:29 by pabmart2          #+#    #+#             */
-/*   Updated: 2025/03/13 20:22:05 by pablo            ###   ########.fr       */
+/*   Updated: 2025/03/29 16:36:20 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,8 +105,8 @@ static void	ft_freemtx(void **mtx)
 
 	i = 0;
 	while (mtx[i])
-		free(mtx[i++]);
-	free(mtx);
+		ft_free((void **)&mtx[i++]);
+	ft_free((void **)&mtx);
 }
 
 char	**ft_split(char const *s, char c)
