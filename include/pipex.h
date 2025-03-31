@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 13:33:49 by pablo             #+#    #+#             */
-/*   Updated: 2025/03/30 01:44:03 by pablo            ###   ########.fr       */
+/*   Updated: 2025/03/31 23:19:21 by pabmart2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,6 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h>
-
-# define HEREDOC_BUFFER_SIZE 5
 
 /**
  * @brief Checks the accessibility of the input and output files.
@@ -111,90 +109,10 @@ void	execute_cmd(char *argv[], size_t *i, int pipes[][2], char **paths);
  */
 char	*get_cmd_path(char command[], char **paths);
 
-/**
- * @brief Reads input from the standard input until a specified EOF marker
- *        is encountered, dynamically allocating memory as needed.
- *
- *
- * This function reads input from the standard input (STDIN_FILENO) in chunks
- * and appends it to a dynamically allocated buffer. It stops reading when the
- * EOF marker is encountered or an error occurs. The buffer is resized
- * dynamically if it becomes full during reading. The function ensures proper
- * handling of memory allocation and deallocation.
- *
- * @param eof The string that marks the end of input (EOF). It must start and
- *            end by newline (\\n).
- * @param eof_size The size of the EOF string, including the newlines.
- *
- * @return A pointer to the dynamically allocated buffer containing the input
- *         read up to the EOF marker.
- * @note: The caller is responsible for freeing this memory.
- */
 char	*heredoc(char *eof, size_t eof_size);
 
-/**
- * @brief Doubles the size of the heredoc buffer.
- *
- * Reallocates memory for the buffer to double its size. Exits
- * the program with EXIT_FAILURE if reallocation fails.
- *
- * @param buffer_size Pointer to the current buffer size, updated
- *                    to the new size after reallocation.
- * @param buffer Pointer to the buffer, updated to point to the
- *
- *
- * @note Exits the program with EXIT_FAILURE if memory reallocation fails.
- */
-void	heredoc_buffer_realloc(size_t *buffer_size, char **buffer);
 
-/**
- * @brief Initializes the heredoc buffer and related variables.
- *
- * Sets up variables for handling heredoc input. Allocates memory for the
- * buffer, initializes buffer stats, and prepares for reading input.
- *
- * @param buffer_size_total Array where buffer_size_total[0] is the allocated
- *                          buffer size and buffer_size_total[1] is the total
- *                          data size in the buffer.
- * @param keep_reading Pointer to a char to control reading (set to 1).
- * @param buffer Pointer to a char pointer for the allocated buffer.
- *
- * @note On allocation failure, calls `ft_perror` and exits with failure.
- */
-void	heredoc_init(size_t buffer_size_total[2], char *keep_reading,
-			char **buffer);
-
-/**
- * @brief Checks if there was an error reading the heredoc.
- *
- * This function checks the result of a read operation on a heredoc and takes
- * appropriate action based on the number of bytes read. If an error occurs
- * during the read operation, it calls `ft_errfree` to handle the error and
- * terminate the program. If the end of the input is reached (bytes_read == 0),
- * it sets the `keep_reading` flag to 0 to signal that no further reading
- * should occur.
- *
- * @param bytes_read The number of bytes read from the heredoc. A value of -1
- *                   indicates an error, and 0 indicates the end of input.
- * @param keep_reading A pointer to a flag that determines whether to continue
- *                     reading. This is set to 0 if the end of input is reached.
- * @param buffer A pointer to the buffer used for reading. This is passed to
- *               `ft_errfree` in case of an error for proper cleanup.
- */
-void	heredoc_no_read(ssize_t bytes_read, char *keep_reading, char **buffer);
-
-/**
- * @brief Opens the specified file in read-only mode and sets it as stdin.
- *
- * Opens the file specified by `file` in read-only mode. If the file cannot
- * be opened, it prints an error message and terminates the program. On
- * success, redirects stdin to read from the file and closes the original
- * file descriptor.
- *
- * @param file Path to the file to be opened and set as stdin.
- * @note It closes the program if an error occurs
- */
-void	set_infile(char file[]);
+void	set_infile(char file[],int pipes[][2]);
 
 /**
  * @brief Opens or creates an output file and redirects the standard output
@@ -216,15 +134,6 @@ void	set_infile(char file[]);
  */
 void	set_outfile(char file[], char append);
 
-/**
- * @brief Waits for all child processes to terminate.
- *
- * This function uses a loop to call `waitpid` repeatedly, waiting for any
- * child process to terminate. It continues until there are no more child
- * processes to wait for. If an error occurs during the wait process and
- * the error is not `ECHILD` (indicating there are no child processes left),
- * it prints an error message using `perror`.
- */
-void	wait_childs(void);
+int		wait_childs(pid_t last_pid);
 
 #endif

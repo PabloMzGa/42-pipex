@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/27 18:08:35 by pablo             #+#    #+#             */
-/*   Updated: 2025/03/30 01:43:56 by pablo            ###   ########.fr       */
+/*   Updated: 2025/03/31 23:54:41 by pabmart2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ void	close_pipes(int pipes[][2])
 
 	status = close_pipe(pipes[0]);
 	status = close_pipe(pipes[1]);
+	status = close_pipe(pipes[2]);
 	if (status == -1)
 		exit(1);
 }
@@ -100,14 +101,27 @@ char	*get_cmd_path(char command[], char **paths)
 			EXIT_FAILURE), NULL);
 }
 
-void	wait_childs(void)
+int	wait_childs(pid_t last_pid)
 {
 	pid_t	pid;
 	int		status;
+	int		exit_status;
 
+	exit_status = 0;
 	pid = waitpid(-1, &status, 0);
 	while (pid > 0)
+	{
+		ft_printf("Esperando hijos, last_pid = %i\n", last_pid);
+		if (pid == last_pid)
+		{
+			if (WIFEXITED(status))
+				exit_status = WEXITSTATUS(status);
+			else if (WIFSIGNALED(status))
+				exit_status = WEXITSTATUS(status);
+		}
 		pid = waitpid(-1, &status, 0);
+	}
 	if (pid == -1 && errno != ECHILD)
 		perror("Error al esperar a los procesos hijos");
+	return (exit_status);
 }

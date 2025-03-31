@@ -16,6 +16,7 @@
 		"string_view": "c",
 		"initializer_list": "c",
 		"type_traits": "c",
-		"string.h": "c"
+		"string.h": "c",
+		"pipex.h": "c"
 	}
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/27 18:08:26 by pablo             #+#    #+#             */
-/*   Updated: 2025/03/30 01:29:26 by pablo            ###   ########.fr       */
+/*   Updated: 2025/03/31 23:54:36 by pabmart2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,27 +46,14 @@
 static void	heredoc_pipe(char *argv[], int heredoc_pipe[])
 {
 	char	*buffer;
-	char	*eof;
-	size_t	eof_s;
 
-	eof_s = ft_strlen(argv[2]);
-	eof = malloc(eof_s + 3);
-	if (!eof)
-		ft_perror("Error allocating EOF", 0, EXIT_FAILURE);
-	ft_strlcpy(eof + 1, argv[2], eof_s);
-	eof[0] = '\n';
-	eof[eof_s + 1] = '\n';
-	eof[eof_s + 2] = '\0';
-	buffer = heredoc(eof, eof_s + 2);
-	ft_printf("%s\n", buffer);
-	ft_free((void **)&eof);
+	buffer = heredoc(argv[2], ft_strlen(argv[2]));
 	if (pipe(heredoc_pipe) == -1)
 		ft_errfree("Error creating heredoc pipe", 0, EXIT_FAILURE,
 			(void *)buffer);
 	write(heredoc_pipe[1], buffer, ft_strlen(buffer));
 	ft_free((void **)&buffer);
 	dup2(heredoc_pipe[0], STDIN_FILENO);
-	close_pipe(heredoc_pipe);
 }
 
 /**
@@ -101,7 +88,7 @@ static void	execute_first_cmd(char *argv[], size_t *i, int pipes[][2],
 		(*i)++;
 	}
 	else
-		set_infile(argv[1]);
+		set_infile(argv[1], pipes);
 	cmd_path = get_cmd_path(argv[*i], paths);
 	args = ft_split(argv[*i], ' ');
 	dup2(pipes[0][1], STDOUT_FILENO);

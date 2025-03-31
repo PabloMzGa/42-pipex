@@ -6,7 +6,7 @@
 /*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 18:26:58 by pabmart2          #+#    #+#             */
-/*   Updated: 2025/03/14 16:36:03 by pabmart2         ###   ########.fr       */
+/*   Updated: 2025/03/31 22:04:10 by pabmart2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -259,7 +259,7 @@ void			ft_putstr_fd(char *s, int fd);
  * Calculates the length of a null-terminated string.
  *
  * @param str The string to calculate the length of.
- * @return The length of the string.
+ * @return The length of the string, or 0 if the string is NULL.
  */
 size_t			ft_strlen(const char *str);
 

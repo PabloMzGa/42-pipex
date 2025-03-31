@@ -3,17 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   ft_free.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/28 17:38:43 by pablo             #+#    #+#             */
-/*   Updated: 2025/03/29 15:05:57 by pablo            ###   ########.fr       */
+/*   Updated: 2025/03/31 22:11:34 by pabmart2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void ft_free(void **ptr)
+void	ft_free(void **ptr)
 {
-	free(*ptr);
-	*ptr = NULL;
+	if (*ptr)
+	{
+		free(*ptr);
+		*ptr = NULL;
+	}
 }

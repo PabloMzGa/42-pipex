@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 18:17:00 by pabmart2          #+#    #+#             */
-/*   Updated: 2025/03/29 15:07:16 by pablo            ###   ########.fr       */
+/*   Updated: 2025/03/31 22:12:43 by pabmart2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,9 @@ void				*ft_calloc(size_t nmemb, size_t size);
  * @brief Frees the memory pointed to by the given pointer and sets it to NULL.
  *
  * This function takes a double pointer to a memory location, frees the memory
- * it points to, and then sets the pointer to NULL to avoid dangling pointers.
+ * it points to, and then sets the pointer to NULL to avoid dangling pointers,
+ *
+ * If the pointer is NULL, it does nothing.
  *
  * @param ptr A double pointer to the memory to be freed. The pointer itself
  *            must not be NULL, but the memory it points to can be NULL.
