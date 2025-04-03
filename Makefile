@@ -3,26 +3,22 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+         #
+#    By: pablo <pablo@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/20 14:34:30 by pabmart2          #+#    #+#              #
-#    Updated: 2025/03/31 22:25:00 by pabmart2         ###   ########.fr        #
+#    Updated: 2025/04/03 19:42:58 by pablo            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g -fno-inline
 LDFLAGS = -lm
 BUILD_DIR = build
 OBJ_DIR = build/obj
 NAME = pipex
 
 SRC = \
-	src/execution.c \
-	src/file_manager.c \
 	src/main.c \
-	src/utils.c \
-	src/heredoc.c \
 
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))
 

@@ -9,7 +9,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${fileDirname}/${fileBasenameNoExtension}", // Adjust this to match your output executable
-      "args": ["infiles/basic.txt", "cat -e", "ls", "outfiles/outfile"],
+      "args": ["here_doc", "EOF", "cat -e", "cat -e", "outfiles/outfile"],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],
@@ -21,11 +21,12 @@
           "text": "-enable-pretty-printing",
           "ignoreFailures": true
         },
-        {
+/*         {
           "description": "Follow forked processes",
           "text": "set follow-fork-mode child", // Sigue al proceso hijo tras fork
           "ignoreFailures": true
-        }
+
+		}, */
       ],
       "preLaunchTask": "build all C and A files"
     }
