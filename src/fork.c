@@ -6,30 +6,33 @@
 /*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 13:16:10 by pablo             #+#    #+#             */
-/*   Updated: 2025/04/07 13:18:45 by pablo            ###   ########.fr       */
+/*   Updated: 2025/04/07 18:58:04 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
 /**
+
  * @brief Handles the creation of a new process using fork and executes a
- *        command in the child process.
+ * command in the child process.
  *
  * This function forks the current process. In the child process, it calls
  * `execute_cmd` to execute a command and then exits. In the parent process,
- * it checks for fork errors and handles cleanup if an error occurs.
+ * it returns the PID of the child. If the fork fails, it cleans up resources
+ * and terminates the program with an error message.
  *
- * @param i Index of the command to execute from the argv array.
- * @param argv Array of command-line arguments passed to the program.
- * @param pipes A 2D array of pipe file descriptors used for inter-process
- *              communication.
- * @param paths Array of possible paths to search for the executable command.
+ * @param i Index of the command to execute.
+ * @param argv Array of command-line arguments.
+
+ * @param pipes Double pointer to an array of pipes used for inter-process
+                communication.
+ * @param paths Array of paths where the command binaries might be located.
  *
- * @note If fork fails, the function cleans up allocated resources and exits
- *       the program with an error message.
+ * @return The PID of the child process on success (in the parent process).
+ *         On failure, the program terminates with an error.
  */
-static void	handle_fork(int i, char *argv[], int **pipes, char **paths)
+static pid_t	handle_fork(int i, char *argv[], int **pipes, char **paths)
 {
 	pid_t	pid;
 
@@ -45,12 +48,14 @@ static void	handle_fork(int i, char *argv[], int **pipes, char **paths)
 		clean_pipes(pipes);
 		ft_perror("Error forking", 0, EXIT_FAILURE);
 	}
+	return (pid);
 }
 
 int	fork_loop(int argc, char *argv[], int **pipes)
 {
 	int		i;
 	char	**paths;
+	pid_t	pid;
 
 	i = 2;
 	paths = ft_split(ft_getenv("PATH"), ':');
@@ -63,12 +68,12 @@ int	fork_loop(int argc, char *argv[], int **pipes)
 		i = -1;
 	while (i < argc - 1)
 	{
-		handle_fork(i, argv, pipes, paths);
+		pid = handle_fork(i, argv, pipes, paths);
 		if (i == -1)
 			i = 3;
 		++i;
 	}
 	clean_pipes(pipes);
 	ft_matrix_free((void **)paths, 0);
-	return (wait_childs(0));
+	return (wait_childs(pid));
 }
