@@ -6,7 +6,7 @@
 #    By: pablo <pablo@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/20 14:34:30 by pabmart2          #+#    #+#              #
-#    Updated: 2025/04/03 19:42:58 by pablo            ###   ########.fr        #
+#    Updated: 2025/04/07 13:22:13 by pablo            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,13 @@ OBJ_DIR = build/obj
 NAME = pipex
 
 SRC = \
+	src/cmd_resolver.c \
+	src/execution.c \
+	src/file_manager.c \
+	src/fork.c \
+	src/heredoc.c \
 	src/main.c \
+	src/utils.c \
 
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))
 
