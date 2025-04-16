@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 13:33:49 by pablo             #+#    #+#             */
-/*   Updated: 2025/04/07 13:18:38 by pablo            ###   ########.fr       */
+/*   Updated: 2025/04/16 19:25:25 by pabmart2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,7 @@ void	clean_pipes(int **pipes);
  * up any previously allocated resources and returns an error.
  *
  * @param pipes A pointer to an array of integer pointers where each element
-
-	*              represents a pipe (an array of two integers for read/write ends).
+ *              represents a pipe (an array of two integers for read/write ends).
  * @param n_pipes The number of pipes to create.
  *
  * @return 0 on success, 1 on failure. On failure, an error message is printed
@@ -59,26 +58,22 @@ int		create_pipes(int **pipes, size_t n_pipes);
 /**
  * @brief Executes a command based on its position in a pipeline.
  *
- * Determines whether the command is the first, middle, or last in a pipeline
- * and calls the appropriate execution function. Handles cleanup of allocated
- * resources such as paths and pipes.
+ * Determines whether the command is the first, middle, or last in a sequence
+ * of piped commands and calls the appropriate execution function. Handles
+ * cleanup of allocated resources such as paths and pipes.
  *
  * @param argv Array of command-line arguments.
- * @param i Index of the current command in the pipeline. A value of -1
- *          indicates the first command, and 2 indicates the last command.
- * @param pipes A double pointer to an array of pipes used for inter-process
+ * @param i Pointer to the index of the current command in the pipeline. If
+ *          *i is -1, it is updated to 3 to indicate the first command.
+ * @param pipes Double pointer to an array of pipes used for inter-process
  *              communication.
- * @param paths An array of possible paths where the command binaries may
- *              be located.
+ * @param paths Array of possible paths for locating the command executables.
  *
- * @note Assumes that `execute_first_cmd`, `execute_middle_cmd`, and
- *       `execute_last_cmd` are implemented to handle respective stages of
- *       pipeline execution.
- *
- * @note Frees the `paths` array and cleans up the `pipes` array after
- *       execution. This should only happen if the executions fails.
+ * @note Assumes that pipes and paths are already set up. Frees paths and
+ *       cleans up pipes after execution.
  */
-void	execute_cmd(char *argv[], int i, int **pipes, char **paths);
+
+void	execute_cmd(char *argv[], int *i, int **pipes, char **paths);
 
 /**
  * @brief Resolves the full path of a command by searching in the given paths.

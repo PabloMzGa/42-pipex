@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 18:31:11 by pablo             #+#    #+#             */
-/*   Updated: 2025/04/05 19:19:27 by pablo            ###   ########.fr       */
+/*   Updated: 2025/04/16 20:04:10 by pabmart2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,14 +49,14 @@ char	*heredoc(char *eof, size_t eof_size)
 		if (line)
 		{
 			if (!ft_strncmp(line, eof, eof_size))
-				return (ft_free((void **)&line), buffer);
+				return (ft_free((void **)&line), ft_get_next_line(-1), buffer);
 			tmp = buffer;
 			buffer = ft_strjoin(buffer, line);
 			if (tmp)
 				ft_free((void **)&tmp);
 			ft_free((void **)&line);
 			if (!buffer)
-				return (ft_free((void **)&buffer),
+				return (ft_free((void **)&buffer), ft_get_next_line(-1),
 					perror("Error joining heredoc"), NULL);
 		}
 		else

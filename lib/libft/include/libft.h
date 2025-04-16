@@ -6,7 +6,7 @@
 /*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 18:17:00 by pabmart2          #+#    #+#             */
-/*   Updated: 2025/03/31 22:12:43 by pabmart2         ###   ########.fr       */
+/*   Updated: 2025/04/16 19:27:13 by pabmart2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ void				*ft_calloc(size_t nmemb, size_t size);
  *       to this function was allocated dynamically (e.g., using malloc, calloc,
  *       or realloc).
  */
-void ft_free(void **ptr);
+void				ft_free(void **ptr);
 
 /**
  * @brief Frees a pointer, prints an error message, and optionally exits.
@@ -117,7 +117,7 @@ void ft_free(void **ptr);
  * @param exit Non-zero to terminate the program.
  * @param ptr Double pointer to the memory to free.
  */
-void ft_errfree(char *msg, char err, char exit, void **ptr);
+void				ft_errfree(char *msg, char err, char exit, void **ptr);
 
 /**
  * @brief Retrieves the value of an environment variable.
@@ -130,7 +130,7 @@ void ft_errfree(char *msg, char err, char exit, void **ptr);
  * @return A pointer to the value of the environment variable if found,
  *         otherwise NULL.
  */
-char	*ft_getenv(const char *env_var);
+char				*ft_getenv(const char *env_var);
 
 /**
  * Checks if the given character is alphanumeric.
@@ -336,9 +336,8 @@ int					ft_lstsize(t_list *lst);
 /**
  * @brief Frees a dynamically allocated 2D array.
  *
-
-	* This function frees each element of a 2D array and then frees the array itself.
- * It can handle arrays where the size is known or unknown.
+ * This function frees each element of a 2D array and then frees the array
+ * itself. It can handle arrays where the size is known or unknown.
  *
  * @param array The 2D array to be freed.
  * @param size The number of elements in the array. If size is 0, the function
@@ -522,7 +521,7 @@ void				ft_nothing(void *content);
  * @param exit_value The value to exit the program with. If 0,
  *                   the program does not exit.
  */
-void	ft_perror(char message[], char err_val, char exit_value);
+void				ft_perror(char message[], char err_val, char exit_value);
 
 /**
  * @brief Writes a character to the specified file descriptor.

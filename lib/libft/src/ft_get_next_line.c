@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_get_next_line.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 13:46:34 by pabmart2          #+#    #+#             */
-/*   Updated: 2025/03/29 16:36:16 by pablo            ###   ########.fr       */
+/*   Updated: 2025/04/16 20:12:30 by pabmart2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,6 +160,8 @@ char	*ft_get_next_line(int fd)
 	char		*rtn_buffer;
 	size_t		nl_pos;
 
+	if (fd == -1)
+		return (ft_free((void **)&aux_buffer), NULL);
 	if (aux_buffer && ft_strchr(aux_buffer, '\n'))
 	{
 		nl_pos = ft_strchr(aux_buffer, '\n') - aux_buffer + 1;

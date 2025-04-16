@@ -3,36 +3,35 @@
 /*                                                        :::      ::::::::   */
 /*   fork.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 13:16:10 by pablo             #+#    #+#             */
-/*   Updated: 2025/04/07 18:58:04 by pablo            ###   ########.fr       */
+/*   Updated: 2025/04/16 19:16:48 by pabmart2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
 /**
-
  * @brief Handles the creation of a new process using fork and executes a
- * command in the child process.
+ *        command in the child process.
  *
  * This function forks the current process. In the child process, it calls
  * `execute_cmd` to execute a command and then exits. In the parent process,
  * it returns the PID of the child. If the fork fails, it cleans up resources
  * and terminates the program with an error message.
  *
- * @param i Index of the command to execute.
+ * @param i Pointer to an integer representing the current command index.
  * @param argv Array of command-line arguments.
-
- * @param pipes Double pointer to an array of pipes used for inter-process
-                communication.
- * @param paths Array of paths where the command binaries might be located.
+ * @param pipes Double pointer to an array of pipe file descriptors.
+ * @param paths Array of paths where the executable might be located.
  *
- * @return The PID of the child process on success (in the parent process).
- *         On failure, the program terminates with an error.
+ * @return The PID of the child process if successful, or -1 if fork fails.
+ *
+ * @note If fork fails, this function will clean up allocated resources
+ *       (e.g., `paths` and `pipes`) and terminate the program.
  */
-static pid_t	handle_fork(int i, char *argv[], int **pipes, char **paths)
+static pid_t	handle_fork(int *i, char *argv[], int **pipes, char **paths)
 {
 	pid_t	pid;
 
@@ -65,12 +64,14 @@ int	fork_loop(int argc, char *argv[], int **pipes)
 		ft_perror("Error getting cmd paths", 0, EXIT_FAILURE);
 	}
 	if (ft_strncmp(argv[1], "here_doc", 9) == 0)
+	{
 		i = -1;
+		if (heredoc_pipe(argv, pipes[0]))
+			return (1);
+	}
 	while (i < argc - 1)
 	{
-		pid = handle_fork(i, argv, pipes, paths);
-		if (i == -1)
-			i = 3;
+		pid = handle_fork(&i, argv, pipes, paths);
 		++i;
 	}
 	clean_pipes(pipes);

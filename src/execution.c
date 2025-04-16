@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 12:37:31 by pablo             #+#    #+#             */
-/*   Updated: 2025/04/07 13:19:42 by pablo            ###   ########.fr       */
+/*   Updated: 2025/04/16 19:22:18 by pabmart2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,12 +72,7 @@ static void	execute_first_cmd(char *argv[], int i, int **pipes, char **paths)
 	char		**args;
 	char		*cmd_path;
 
-	if (i == 3)
-	{
-		if (heredoc_pipe(argv, pipes[0]))
-			return ;
-	}
-	else if (set_infile(argv[1]))
+	if (set_infile(argv[1]))
 		return ;
 	cmd_path = get_cmd_path(argv[i], paths);
 	if (!cmd_path)
@@ -223,18 +218,35 @@ static void	execute_last_cmd(char *argv[], int i, int **pipes, char **paths)
 	}
 }
 
-void	execute_cmd(char *argv[], int i, int **pipes, char **paths)
+/**
+ * @brief Executes a command based on its position in a pipeline.
+ *
+ * Determines whether the command is the first, middle, or last in a sequence
+ * of piped commands and calls the appropriate execution function. Handles
+ * cleanup of allocated resources such as paths and pipes.
+ *
+ * @param argv Array of command-line arguments.
+ * @param i Pointer to the index of the current command in the pipeline. If
+ *          *i is -1, it is updated to 3 to indicate the first command.
+ * @param pipes Double pointer to an array of pipes used for inter-process
+ *              communication.
+ * @param paths Array of possible paths for locating the command executables.
+ *
+ * @note Assumes that pipes and paths are already set up. Frees paths and
+ *       cleans up pipes after execution.
+ */
+void	execute_cmd(char *argv[], int *i, int **pipes, char **paths)
 {
-	if (i == -1 || i == 2)
+	if (*i == -1 || *i == 2)
 	{
-		if (i == -1)
-			i = 3;
-		execute_first_cmd(argv, i, pipes, paths);
+		if (*i == -1)
+			*i = 3;
+		execute_first_cmd(argv, *i, pipes, paths);
 	}
-	else if (argv[i + 2] != NULL)
-		execute_middle_cmd(argv, i, pipes, paths);
+	else if (argv[*i + 2] != NULL)
+		execute_middle_cmd(argv, *i, pipes, paths);
 	else
-		execute_last_cmd(argv, i, pipes, paths);
+		execute_last_cmd(argv, *i, pipes, paths);
 	ft_matrix_free((void **)paths, 0);
 	clean_pipes(pipes);
 }
