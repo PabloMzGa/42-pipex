@@ -17,6 +17,7 @@
 		"initializer_list": "c",
 		"type_traits": "c",
 		"string.h": "c",
-		"pipex.h": "c"
+		"pipex.h": "c",
+		"*.tcc": "c"
 	}
 }

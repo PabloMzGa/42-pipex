@@ -6,7 +6,7 @@
 /*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 18:31:11 by pablo             #+#    #+#             */
-/*   Updated: 2025/04/16 20:04:10 by pabmart2         ###   ########.fr       */
+/*   Updated: 2025/05/14 20:40:34 by pabmart2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,16 +64,48 @@ char	*heredoc(char *eof, size_t eof_size)
 	}
 }
 
-int	heredoc_pipe(char *argv[], int heredoc_pipe[])
+char	*gerate_tmp_heredoc_name(void)
+{
+	int		n;
+	char	tmp_name;
+	char	*tmp_n;
+
+	n = 0;
+	tmp_n = ft_itoa(n);
+	tmp_name = ft_strjoin("heredoc_tmp", tmp_n);
+	if (!tmp_n || !tmp_name)
+		return (NULL);
+	while (access(tmp_name, W_OK))
+	{
+		ft_free((void **)&n);
+		ft_free((void **)&tmp_name);
+		tmp_n = ft_itoa(++n);
+		tmp_name = ft_strjoin("heredoc_tmp", tmp_n);
+		if (!tmp_n || !tmp_name)
+			return (NULL);
+	}
+	ft_free((void **)&n);
+	return (tmp_name);
+}
+
+char	*set_heredoc_tmp_file(char *eof)
 {
 	char	*buffer;
+	char	*tmp_name;
+	int		tmp_file;
 
-	buffer = heredoc(argv[2], ft_strlen(argv[2]));
+	buffer = heredoc(eof, ft_strlen(eof));
 	if (!buffer)
 		return (1);
-	write(heredoc_pipe[1], buffer, ft_strlen(buffer));
+	tmp_name = gerate_tmp_heredoc_name();
+	if (!tmp_name)
+		return (perror("Error generating heredoc tmp filename"), 1);
+	tmp_file = open(tmp_name, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (tmp_file == -1)
+		return (ft_free((void **)tmp_name),
+			perror("Error opening here_doc tmp file"), NULL);
+	write(tmp_file, buffer, ft_strlen(buffer));
 	ft_free((void **)&buffer);
-	if (dup2(heredoc_pipe[0], STDIN_FILENO) == -1)
-		return (perror("Error duplicating stdin in heredoc"), 1);
-	return (0);
+	ft_free((void **)tmp_name);
+	return (tmp_name);
 }

@@ -6,7 +6,7 @@
 /*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 13:33:49 by pablo             #+#    #+#             */
-/*   Updated: 2025/04/16 19:25:25 by pabmart2         ###   ########.fr       */
+/*   Updated: 2025/05/14 21:33:04 by pabmart2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,29 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h>
+
+/**
+ * @struct s_pipex_info
+ * @brief Structure to store information required for pipex execution.
+ *
+ * @param s_pipex_info
+ * Index or counter used during pipex operations.
+ *
+ * @param s_pipex_info
+ * 2D array of integers representing file descriptors for pipes.
+ *
+ * @param s_pipex_info
+ * Array of strings containing possible executable paths.
+ */
+typedef struct s_pipex_info
+{
+	int		i;
+	int		**pipes;
+	char	**paths;
+	char	*heredoc_tmp_file;
+}			t_pinfo;
+
+void	clean_pinfo(t_pinfo *pinfo);
 
 /**
  * @brief Cleans up and closes an array of pipes.
@@ -34,7 +57,7 @@
  *       If any error occurs while closing the pipes, the program will terminate
  *       with an error message.
  */
-void	clean_pipes(int **pipes);
+void		clean_pipes(int **pipes);
 
 /**
  * @brief Creates a specified number of pipes and allocates memory for them.
@@ -44,7 +67,8 @@ void	clean_pipes(int **pipes);
  * up any previously allocated resources and returns an error.
  *
  * @param pipes A pointer to an array of integer pointers where each element
- *              represents a pipe (an array of two integers for read/write ends).
+
+	*              represents a pipe (an array of two integers for read/write ends).
  * @param n_pipes The number of pipes to create.
  *
  * @return 0 on success, 1 on failure. On failure, an error message is printed
@@ -53,7 +77,7 @@ void	clean_pipes(int **pipes);
  * @note The caller must free the allocated memory for the pipes using the
  *       `clean_pipes()` function after use.
  */
-int		create_pipes(int **pipes, size_t n_pipes);
+int			create_pipes(int **pipes, size_t n_pipes);
 
 /**
  * @brief Executes a command based on its position in a pipeline.
@@ -62,18 +86,14 @@ int		create_pipes(int **pipes, size_t n_pipes);
  * of piped commands and calls the appropriate execution function. Handles
  * cleanup of allocated resources such as paths and pipes.
  *
+ * @param pinfo Pointer to a t_pinfo structure where process information will
+ *              be stored or updated.
  * @param argv Array of command-line arguments.
- * @param i Pointer to the index of the current command in the pipeline. If
- *          *i is -1, it is updated to 3 to indicate the first command.
- * @param pipes Double pointer to an array of pipes used for inter-process
- *              communication.
- * @param paths Array of possible paths for locating the command executables.
- *
  * @note Assumes that pipes and paths are already set up. Frees paths and
  *       cleans up pipes after execution.
  */
 
-void	execute_cmd(char *argv[], int *i, int **pipes, char **paths);
+void	execute_cmd(t_pinfo *pinfo, char *argv[]);
 
 /**
  * @brief Resolves the full path of a command by searching in the given paths.
@@ -94,7 +114,7 @@ void	execute_cmd(char *argv[], int *i, int **pipes, char **paths);
  * @return A string containing the full path of the command if found, or NULL
  *         if an error occurs. The returned string must be freed by the caller.
  */
-char	*get_cmd_path(char command[], char **paths);
+char		*get_cmd_path(char command[], char **paths);
 
 /**
  * @brief Executes a loop to fork processes and handle commands.
@@ -121,7 +141,7 @@ char	*get_cmd_path(char command[], char **paths);
  * @note If an error occurs while retrieving the PATH or during resource
  *       allocation, the function cleans up and exits with a failure status.
  */
-int		fork_loop(int argc, char *argv[], int **pipes);
+int			fork_loop(int argc, char *argv[], int **pipes);
 
 /**
  * @brief Reads input from stdin until a specified EOF string is encountered.
@@ -146,27 +166,20 @@ int		fork_loop(int argc, char *argv[], int **pipes);
  * - On read or join errors, frees memory, prints an error with `perror`,
  *   and returns NULL.
  */
-char	*heredoc(char *eof, size_t eof_size);
+char		*heredoc(char *eof, size_t eof_size);
 
 /**
- * @brief Handles heredoc functionality by reading input until a delimiter
- *        is encountered and writing it to a pipe.
- * Reads input from the user until the specified delimiter (argv[2]) is
- * encountered. The input is stored in a buffer, written to the write end of the
- * pipe (heredoc_pipe[1]), and freed. The read end of the pipe (heredoc_pipe[0])
- * is duplicated to standard input (STDIN_FILENO) for subsequent processes to
- * read heredoc content.
+ * @brief Creates a temporary file containing heredoc input.
  *
- * @param argv Array of command-line arguments. The delimiter for the heredoc
- *             is expected to be in argv[2].
- * @param heredoc_pipe An array of two file descriptors representing the pipe.
- *                     heredoc_pipe[1] is used for writing the heredoc content,
- *                     and heredoc_pipe[0] is used for reading.
+ * Reads input from the user until the specified EOF delimiter is encountered,
+ * writes the input to a newly generated temporary file, and returns the name
+ * of the file. Handles memory allocation, file creation, and error reporting.
  *
- * @return 0 on success or 1 if an error occurs
- *         (e.g., memory allocation failure in heredoc()).
+ * @param eof The end-of-file delimiter string for the heredoc.
+ * @return On success, returns the name of the temporary file (char *).
+ *         On failure, returns NULL or 1 depending on the error encountered.
  */
-int		heredoc_pipe(char *argv[], int heredoc_pipe[]);
+char		*set_heredoc_tmp_file(char *eof);
 
 /**
  * @brief Sets the specified file as the standard input (stdin) for the process.
@@ -183,7 +196,7 @@ int		heredoc_pipe(char *argv[], int heredoc_pipe[]);
  * @note This function modifies the standard output (stdout) of the process, so
  *       subsequent writes to stdout will write to the specified file.
  */
-int		set_infile(char file[]);
+int			set_infile(char file[]);
 
 /**
  * @brief Sets the specified file as the standard output (STDOUT).
@@ -204,7 +217,7 @@ int		set_infile(char file[]);
  *       closed, an error message is printed, and the function
  *       returns an error code.
  */
-int		set_outfile(char file[], char append);
+int			set_outfile(char file[], char append);
 
 /**
  * @brief Waits for all child processes to terminate and retrieves the exit
@@ -223,6 +236,6 @@ int		set_outfile(char file[], char append);
  * @return The exit status of the child process with PID `last_pid`. If no
  *         such process is found, the function returns 0.
  */
-int		wait_childs(pid_t last_pid);
+int			wait_childs(pid_t last_pid);
 
 #endif

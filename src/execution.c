@@ -6,7 +6,7 @@
 /*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 12:37:31 by pablo             #+#    #+#             */
-/*   Updated: 2025/04/16 19:22:18 by pabmart2         ###   ########.fr       */
+/*   Updated: 2025/05/14 22:51:00 by pabmart2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,12 +48,9 @@ static void	execution_cleanup(char *cmd_path, char **args)
  *
  * - Executes the command using `execve`.
  *
+ * @param pinfo Pointer to a t_pinfo structure where process information will
+ *              be stored or updated.
  * @param argv An array of strings representing the command-line arguments.
- * @param i The index of the current command in the pipeline.
- * @param pipes A double pointer to an array of pipes for inter-process
- *              communication.
- * @param paths An array of strings representing the possible paths to search
- *              for the command.
  *
  * @note
  * - The function uses the global `environ` variable to pass the environment
@@ -66,7 +63,7 @@ static void	execution_cleanup(char *cmd_path, char **args)
  * @warning This function does not return if `execve` is successful, as the
  *         current process image is replaced by the new process image.
  */
-static void	execute_first_cmd(char *argv[], int i, int **pipes, char **paths)
+static void	execute_first_cmd(t_pinfo *pinfo, char *argv[])
 {
 	extern char	**environ;
 	char		**args;
@@ -74,16 +71,16 @@ static void	execute_first_cmd(char *argv[], int i, int **pipes, char **paths)
 
 	if (set_infile(argv[1]))
 		return ;
-	cmd_path = get_cmd_path(argv[i], paths);
+	cmd_path = get_cmd_path(argv[pinfo->i], pinfo->paths);
 	if (!cmd_path)
 	{
-		clean_pipes(pipes);
+		clean_pipes(pinfo->pipes);
 		ft_perror("Command not found", 0, 127);
 	}
-	args = ft_split(argv[i], ' ');
-	if (dup2(pipes[i - 2][1], STDOUT_FILENO) != -1)
+	args = ft_split(argv[pinfo->i], ' ');
+	if (dup2(pinfo->pipes[pinfo->i - 2][1], STDOUT_FILENO) != -1)
 	{
-		clean_pipes(pipes);
+		clean_pipes(pinfo->pipes);
 		execve(cmd_path, args, environ);
 	}
 	execution_cleanup(cmd_path, args);
@@ -102,7 +99,7 @@ static void	execute_first_cmd(char *argv[], int i, int **pipes, char **paths)
  *
  * - The command string is split into arguments using `ft_split`.
  *
- * - Input redirection is set up using `pipes[i - 3][0]`, and output redirection
+ * - Input redirection is set up usiy `pipes[i - 3][0]`, and output redirection
  *   is set up using `pipes[i - 2][1]` with `dup2`.
  *
  * - If `execve` fails, the function ensures proper cleanup of allocated
@@ -128,23 +125,23 @@ static void	execute_first_cmd(char *argv[], int i, int **pipes, char **paths)
  * @warning This function does not return if `execve` is successful, as the
  *          current process image is replaced by the new process image.
  */
-static void	execute_middle_cmd(char *argv[], int i, int **pipes, char **paths)
+static void	execute_middle_cmd(t_pinfo *pinfo, char *argv[])
 {
 	extern char	**environ;
 	char		**args;
 	char		*cmd_path;
 
-	cmd_path = get_cmd_path(argv[i], paths);
+	cmd_path = get_cmd_path(argv[pinfo->i], pinfo->paths);
 	if (!cmd_path)
 	{
-		clean_pipes(pipes);
+		clean_pipes(pinfo->pipes);
 		ft_perror("Command not found", 0, 127);
 	}
-	args = ft_split(argv[i], ' ');
-	if (dup2(pipes[i - 3][0], STDIN_FILENO) != -1 && dup2(pipes[i - 2][1],
-			STDOUT_FILENO) != -1)
+	args = ft_split(argv[pinfo->i], ' ');
+	if (dup2(pinfo->pipes[pinfo->i - 3][0], STDIN_FILENO) != -1
+		&& dup2(pinfo->pipes[pinfo->i - 2][1], STDOUT_FILENO) != -1)
 	{
-		clean_pipes(pipes);
+		clean_pipes(pinfo->pipes);
 		execve(cmd_path, args, environ);
 	}
 	execution_cleanup(cmd_path, args);
@@ -189,7 +186,7 @@ static void	execute_middle_cmd(char *argv[], int i, int **pipes, char **paths)
  * @warning The function terminates the process if an error occurs during
  *          execution or resource setup.
  */
-static void	execute_last_cmd(char *argv[], int i, int **pipes, char **paths)
+static void	execute_last_cmd(t_pinfo *pinfo, char *argv[])
 {
 	extern char	**environ;
 	char		**args;
@@ -197,56 +194,39 @@ static void	execute_last_cmd(char *argv[], int i, int **pipes, char **paths)
 	int			outfile_status;
 
 	if (ft_strncmp(argv[1], "here_doc", 9) == 0)
-		outfile_status = set_outfile(argv[i + 1], 1);
+		outfile_status = set_outfile(argv[pinfo->i + 1], 1);
 	else
-		outfile_status = set_outfile(argv[i + 1], 0);
+		outfile_status = set_outfile(argv[pinfo->i + 1], 0);
 	if (!outfile_status)
 	{
-		cmd_path = get_cmd_path(argv[i], paths);
+		cmd_path = get_cmd_path(argv[pinfo->i], pinfo->paths);
 		if (!cmd_path)
 		{
-			clean_pipes(pipes);
+			clean_pipes(pinfo->pipes);
 			ft_perror("Command not found", 0, 127);
 		}
-		args = ft_split(argv[i], ' ');
-		if (dup2(pipes[i - 3][0], STDIN_FILENO) != -1)
+		args = ft_split(argv[pinfo->i], ' ');
+		if (dup2(pinfo->pipes[pinfo->i - 3][0], STDIN_FILENO) != -1)
 		{
-			clean_pipes(pipes);
+			clean_pipes(pinfo->pipes);
 			execve(cmd_path, args, environ);
 		}
 		execution_cleanup(cmd_path, args);
 	}
 }
 
-/**
- * @brief Executes a command based on its position in a pipeline.
- *
- * Determines whether the command is the first, middle, or last in a sequence
- * of piped commands and calls the appropriate execution function. Handles
- * cleanup of allocated resources such as paths and pipes.
- *
- * @param argv Array of command-line arguments.
- * @param i Pointer to the index of the current command in the pipeline. If
- *          *i is -1, it is updated to 3 to indicate the first command.
- * @param pipes Double pointer to an array of pipes used for inter-process
- *              communication.
- * @param paths Array of possible paths for locating the command executables.
- *
- * @note Assumes that pipes and paths are already set up. Frees paths and
- *       cleans up pipes after execution.
+/** TODO: Arreglar execute_first_cmd para detectar si existe heredoc_tmp_file
+ * y así poder leer o bien infile, o el archivo temporal de heredoc
  */
-void	execute_cmd(char *argv[], int *i, int **pipes, char **paths)
+void	execute_cmd(t_pinfo *pinfo, char *argv[])
 {
-	if (*i == -1 || *i == 2)
+	if (pinfo->heredoc_tmp_file || pinfo->i == 2)
+		execute_first_cmd(pinfo, argv);
+	else if (argv[pinfo->i + 2] != NULL || pinfo->i == -1)
 	{
-		if (*i == -1)
-			*i = 3;
-		execute_first_cmd(argv, *i, pipes, paths);
+		execute_middle_cmd(pinfo, argv);
 	}
-	else if (argv[*i + 2] != NULL)
-		execute_middle_cmd(argv, *i, pipes, paths);
 	else
-		execute_last_cmd(argv, *i, pipes, paths);
-	ft_matrix_free((void **)paths, 0);
-	clean_pipes(pipes);
+		execute_last_cmd(pinfo, argv);
+	clean_pinfo(pinfo);
 }
