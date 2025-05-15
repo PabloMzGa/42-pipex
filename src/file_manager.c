@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   file_manager.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 19:10:05 by pablo             #+#    #+#             */
-/*   Updated: 2025/04/07 13:19:32 by pablo            ###   ########.fr       */
+/*   Updated: 2025/05/15 17:46:08 by pabmart2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	set_infile(char file[])
 	file_fd = open(file, O_RDONLY);
 	if (file_fd == -1)
 	{
-		perror("Error opening file");
+		perror("Error opening infile");
 		return (1);
 	}
 	if (dup2(file_fd, STDIN_FILENO) == -1)
@@ -35,6 +35,12 @@ int	set_infile(char file[])
 	return (0);
 }
 
+void	remove_heredoc_tmp_file(char *filename)
+{
+	if (unlink(filename) != 0)
+		perror("Error removing heredoc temp file");
+}
+
 int	set_outfile(char file[], char append)
 {
 	int	file_fd;
@@ -45,7 +51,7 @@ int	set_outfile(char file[], char append)
 		file_fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (file_fd == -1)
 	{
-		perror("Error opening file");
+		perror("Error opening outfile");
 		return (1);
 	}
 	if (dup2(file_fd, STDOUT_FILENO) == -1)
@@ -56,9 +62,6 @@ int	set_outfile(char file[], char append)
 		return (1);
 	}
 	if (close(file_fd))
-	{
-		perror("Error closing file");
-		return (1);
-	}
+		return (perror("Error closing file"), 1);
 	return (0);
 }

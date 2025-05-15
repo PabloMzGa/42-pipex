@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 18:29:14 by pablo             #+#    #+#             */
-/*   Updated: 2025/04/07 13:11:54 by pablo            ###   ########.fr       */
+/*   Updated: 2025/05/15 18:59:26 by pabmart2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,12 +76,14 @@ int	create_pipes(int **pipes, size_t n_pipes)
  * @return The exit status of the child process with PID `last_pid`. If no
  *         such process is found, the function returns 0.
  */
-int	wait_childs(pid_t last_pid)
+int	wait_childs(pid_t last_pid, t_pinfo *pinfo)
 {
 	pid_t	pid;
 	int		status;
 	int		exit_status;
 
+	clean_pipes(pinfo->pipes);
+	pinfo->pipes = NULL;
 	exit_status = 0;
 	pid = waitpid(-1, &status, 0);
 	while (pid > 0)
@@ -97,5 +99,8 @@ int	wait_childs(pid_t last_pid)
 	}
 	if (pid == -1 && errno != ECHILD)
 		perror("Error al esperar a los procesos hijos");
+	if (pinfo->heredoc_tmp_file)
+		remove_heredoc_tmp_file(pinfo->heredoc_tmp_file);
+	clean_pinfo(pinfo);
 	return (exit_status);
 }

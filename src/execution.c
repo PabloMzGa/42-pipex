@@ -6,7 +6,7 @@
 /*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 12:37:31 by pablo             #+#    #+#             */
-/*   Updated: 2025/05/14 22:51:00 by pabmart2         ###   ########.fr       */
+/*   Updated: 2025/05/15 18:51:08 by pabmart2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,13 @@ static void	execute_first_cmd(t_pinfo *pinfo, char *argv[])
 	extern char	**environ;
 	char		**args;
 	char		*cmd_path;
+	char		*infile_name;
 
-	if (set_infile(argv[1]))
+	if (pinfo->heredoc_tmp_file)
+		infile_name = pinfo->heredoc_tmp_file;
+	else
+		infile_name = argv[1];
+	if (set_infile(infile_name))
 		return ;
 	cmd_path = get_cmd_path(argv[pinfo->i], pinfo->paths);
 	if (!cmd_path)
@@ -193,7 +198,7 @@ static void	execute_last_cmd(t_pinfo *pinfo, char *argv[])
 	char		*cmd_path;
 	int			outfile_status;
 
-	if (ft_strncmp(argv[1], "here_doc", 9) == 0)
+	if (pinfo->heredoc_tmp_file)
 		outfile_status = set_outfile(argv[pinfo->i + 1], 1);
 	else
 		outfile_status = set_outfile(argv[pinfo->i + 1], 0);
@@ -215,17 +220,12 @@ static void	execute_last_cmd(t_pinfo *pinfo, char *argv[])
 	}
 }
 
-/** TODO: Arreglar execute_first_cmd para detectar si existe heredoc_tmp_file
- * y así poder leer o bien infile, o el archivo temporal de heredoc
- */
 void	execute_cmd(t_pinfo *pinfo, char *argv[])
 {
-	if (pinfo->heredoc_tmp_file || pinfo->i == 2)
+	if (pinfo->i == 2 || (pinfo->heredoc_tmp_file && pinfo->i == 3))
 		execute_first_cmd(pinfo, argv);
-	else if (argv[pinfo->i + 2] != NULL || pinfo->i == -1)
-	{
+	else if (argv[pinfo->i + 2] != NULL)
 		execute_middle_cmd(pinfo, argv);
-	}
 	else
 		execute_last_cmd(pinfo, argv);
 	clean_pinfo(pinfo);

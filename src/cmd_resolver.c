@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_resolver.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 12:50:33 by pablo             #+#    #+#             */
-/*   Updated: 2025/04/07 13:21:57 by pablo            ###   ########.fr       */
+/*   Updated: 2025/05/15 18:52:53 by pabmart2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ static char	*search_path(char **paths, char *cmd, char **splitted_args)
 		{
 			ft_matrix_free((void **)splitted_args, 0);
 			ft_free((void **)&cmd);
+			errno = 0;
 			return (cmd_path);
 		}
 		if (cmd_path)
@@ -101,6 +102,36 @@ static char	*search_path(char **paths, char *cmd, char **splitted_args)
 		++i;
 	}
 	return (cmd_error_cleanup(cmd, splitted_args, paths));
+}
+
+/**
+ * @brief Frees all elements of the splitted_args array except the first one,
+ *        and returns the first element (the command).
+ *
+ * This function iterates through the splitted_args array starting from index 1,
+ * frees each element using ft_free, and finally frees the splitted_args array
+ * itself. The first element (splitted_args[0]) is returned as the absolute
+ * command path.
+ *
+ * @param splitted_args Array of strings, where the first element is the
+ *        command, and the rest are arguments or paths to be freed.
+ * @return char* Pointer to the first element of splitted_args (the command).
+ */
+static char	*get_abosulte_cmd(char **splitted_args)
+{
+	fprintf(stderr, "Ejecutando cmd absoluto\n");
+	size_t	i;
+	char	*cmd;
+
+	i = 1;
+	cmd = splitted_args[0];
+	while (splitted_args[i])
+	{
+		ft_free((void **)&splitted_args[i]);
+		++i;
+	}
+	ft_free((void **)&splitted_args);
+	return (cmd);
 }
 
 char	*get_cmd_path(char command[], char **paths)
@@ -114,6 +145,9 @@ char	*get_cmd_path(char command[], char **paths)
 	if (!splitted_args[0])
 		return (cmd_path_error("Error Empty command", ENODATA, splitted_args,
 				paths));
+	if (access(splitted_args[0], X_OK) != -1)
+		return (get_abosulte_cmd(splitted_args));
+	errno = 0;
 	cmd = ft_strjoin("/", splitted_args[0]);
 	if (!cmd)
 		return (cmd_path_error("Error adding '/' to command", 0, splitted_args,

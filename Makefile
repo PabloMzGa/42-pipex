@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: pablo <pablo@student.42.fr>                +#+  +:+       +#+         #
+#    By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/20 14:34:30 by pabmart2          #+#    #+#              #
-#    Updated: 2025/04/07 18:39:29 by pablo            ###   ########.fr        #
+#    Updated: 2025/05/15 18:59:03 by pabmart2         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,6 +24,7 @@ SRC = \
 	src/fork.c \
 	src/heredoc.c \
 	src/main.c \
+	src/pinfo.c \
 	src/utils.c \
 
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))

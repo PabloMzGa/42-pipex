@@ -6,7 +6,7 @@
 /*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 11:59:19 by pablo             #+#    #+#             */
-/*   Updated: 2025/04/16 19:30:58 by pabmart2         ###   ########.fr       */
+/*   Updated: 2025/05/15 18:32:06 by pabmart2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ int	main(int argc, char *argv[])
 {
 	size_t	n_pipes;
 	int		**pipes;
+
 
 	n_pipes = argc - 4;
 	if (argc > 2 && ft_strncmp(argv[1], "here_doc", 9) == 0)

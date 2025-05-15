@@ -1,2 +1,4 @@
 build
 42_pipex_tester
+outfiles
+*.out

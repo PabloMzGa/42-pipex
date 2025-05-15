@@ -6,7 +6,7 @@
 /*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 13:33:49 by pablo             #+#    #+#             */
-/*   Updated: 2025/05/14 21:33:04 by pabmart2         ###   ########.fr       */
+/*   Updated: 2025/05/15 18:06:47 by pabmart2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ typedef struct s_pipex_info
 	char	*heredoc_tmp_file;
 }			t_pinfo;
 
-void	clean_pinfo(t_pinfo *pinfo);
+void		clean_pinfo(t_pinfo *pinfo);
 
 /**
  * @brief Cleans up and closes an array of pipes.
@@ -92,8 +92,7 @@ int			create_pipes(int **pipes, size_t n_pipes);
  * @note Assumes that pipes and paths are already set up. Frees paths and
  *       cleans up pipes after execution.
  */
-
-void	execute_cmd(t_pinfo *pinfo, char *argv[]);
+void		execute_cmd(t_pinfo *pinfo, char *argv[]);
 
 /**
  * @brief Resolves the full path of a command by searching in the given paths.
@@ -168,18 +167,25 @@ int			fork_loop(int argc, char *argv[], int **pipes);
  */
 char		*heredoc(char *eof, size_t eof_size);
 
+void		remove_heredoc_tmp_file(char *filename);
+
 /**
- * @brief Creates a temporary file containing heredoc input.
- *
- * Reads input from the user until the specified EOF delimiter is encountered,
- * writes the input to a newly generated temporary file, and returns the name
- * of the file. Handles memory allocation, file creation, and error reporting.
- *
- * @param eof The end-of-file delimiter string for the heredoc.
- * @return On success, returns the name of the temporary file (char *).
- *         On failure, returns NULL or 1 depending on the error encountered.
- */
+	* @brief Creates a temporary file containing heredoc input.
+	*
+	* Reads input from the user until the specified EOF delimiter is encountered,
+	* writes the input to a newly generated temporary file,
+		and returns the name
+	* of the file. Handles memory allocation, file creation,
+		and error reporting.
+	*
+	* @param eof The end-of-file delimiter string for the heredoc.
+	* @return On success, returns the name of the temporary file (char *).
+	*         On failure,
+		returns NULL or 1 depending on the error encountered.
+	*/
 char		*set_heredoc_tmp_file(char *eof);
+
+t_pinfo		*set_pinfo(int **pipes);
 
 /**
  * @brief Sets the specified file as the standard input (stdin) for the process.
@@ -219,23 +225,6 @@ int			set_infile(char file[]);
  */
 int			set_outfile(char file[], char append);
 
-/**
- * @brief Waits for all child processes to terminate and retrieves the exit
- *        status of the last child process specified by `last_pid`.
- *
- * This function waits for all child processes to terminate using `waitpid`
- * in a loop. If the PID of the terminated child matches `last_pid`, the
- * function retrieves its exit status. The exit status is determined based
- * on whether the child exited normally or was terminated by a signal.
- *
- * If an error occurs while waiting for child processes (other than no more
- * child processes to wait for), an error message is printed using `perror`.
- *
- * @param last_pid The PID of the last child process whose exit status is to
- *                 be returned.
- * @return The exit status of the child process with PID `last_pid`. If no
- *         such process is found, the function returns 0.
- */
-int			wait_childs(pid_t last_pid);
+int			wait_childs(pid_t last_pid, t_pinfo *pinfo);
 
 #endif
