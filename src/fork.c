@@ -3,71 +3,68 @@
 /*                                                        :::      ::::::::   */
 /*   fork.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 13:16:10 by pablo             #+#    #+#             */
-/*   Updated: 2025/05/15 18:29:22 by pabmart2         ###   ########.fr       */
+/*   Updated: 2025/05/22 22:13:13 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
 /**
- * @brief Handles the creation of a new process using fork and sets up process
- * information.
+ * @brief Creates a child process to execute a command within a pipeline
  *
- * This function is responsible for forking the current process and updating
- * the provided process information structure (`t_pinfo`). It may also handle
- * additional setup required for the child or parent process, depending on the
- * implementation.
+ * This function forks a new process. In the child process, it executes
+ * the specified command using execute_cmd. In the parent process, it returns
+ * the child's PID. If fork fails, it cleans up resources and exits with an
+ * error.
  *
- * @param pinfo Pointer to a t_pinfo structure where process information will
- *              be stored or updated.
- * @param argv  Array of argument strings, typically passed from main().
- * @return The process ID (pid_t) of the child process in the parent, or 0 in
- *         he child. Returns -1 if the fork fails.
+ * @param i Index of the command in the pipeline
+ * @param argv Array of arguments, including the command to execute
+ * @param pipe_fds Array of pipe file descriptors for the pipeline
+ * @param paths Matrix containing PATH information for executable lookup
+ *
+ * @return The process ID of the child, or -1 if fork failed
  */
-static pid_t	handle_fork(t_pinfo *pinfo, char *argv[])
+static pid_t	handle_fork(int i, char *argv[], int *pipe_fds, char **paths)
 {
 	pid_t	pid;
 
 	pid = fork();
 	if (pid == 0)
 	{
-		execute_cmd(pinfo, argv);
+		execute_cmd(argv, paths, pipe_fds, i);
 		exit(EXIT_FAILURE);
 	}
 	else if (pid == -1)
 	{
-		clean_pinfo(pinfo);
 		ft_perror("Error forking", 0, EXIT_FAILURE);
+		clean_pipe(pipe_fds);
+		ft_matrix_free((void **)paths, 0);
 	}
 	return (pid);
 }
 
-int	fork_loop(int argc, char *argv[], int **pipes)
+int	fork_loop(int argc, char *argv[], int *pipe_fds)
 {
 	int		i;
 	pid_t	pid;
-	t_pinfo	*pinfo;
+	char	**paths;
 
-	pinfo = set_pinfo(pipes);
-	if (!pinfo)
-		return (1);
-	i = 2;
-
-	if (ft_strncmp(argv[1], "here_doc", 9) == 0)
+	paths = ft_split(ft_getenv("PATH"), ':');
+	if (!paths)
 	{
-		i = 3;
-		pinfo->heredoc_tmp_file = set_heredoc_tmp_file(argv[2]);
-		if (!pinfo->heredoc_tmp_file)
-			return (clean_pinfo(pinfo), 1);
+		clean_pipe(pipe_fds);
+		ft_perror("Error getting cmd paths", 0, EXIT_FAILURE);
 	}
+	i = 2;
 	while (i < argc - 1)
 	{
-		pinfo->i = i;
-		pid = handle_fork(pinfo, argv);
+		pid = handle_fork(i, argv, pipe_fds, paths);
 		++i;
 	}
-	return (wait_childs(pid, pinfo));
+	ft_matrix_free((void **)paths, 0);
+	clean_pipe(pipe_fds);
+	return (wait_childs(pid));
 }

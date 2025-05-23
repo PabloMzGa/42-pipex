@@ -1,16 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   heredoc.c                                          :+:      :+:    :+:   */
+/*   heredoc_bonus.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 18:31:11 by pablo             #+#    #+#             */
-/*   Updated: 2025/05/15 17:42:04 by pabmart2         ###   ########.fr       */
+/*   Updated: 2025/05/22 22:18:01 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
+
+static int	check_zero_eof(char eof, char line)
+{
+	if (eof == '\0')
+	{
+		if (line == '\n')
+			return (1);
+		else
+			return (0);
+	}
+	return (1);
+}
 
 /**
  * @brief Reads input from stdin until a specified EOF string is encountered.
@@ -48,7 +60,7 @@ char	*heredoc(char *eof, size_t eof_size)
 		line = ft_get_next_line(STDIN_FILENO);
 		if (line)
 		{
-			if (!ft_strncmp(line, eof, eof_size))
+			if (!ft_strncmp(line, eof, eof_size) && check_zero_eof(*eof, *line))
 				return (ft_free((void **)&line), ft_get_next_line(-1), buffer);
 			tmp = buffer;
 			buffer = ft_strjoin(buffer, line);
@@ -64,7 +76,7 @@ char	*heredoc(char *eof, size_t eof_size)
 	}
 }
 
-char	*gerate_tmp_heredoc_name(void)
+static char	*gerate_tmp_heredoc_name(void)
 {
 	int		n;
 	char	*tmp_name;
@@ -100,12 +112,16 @@ char	*set_heredoc_tmp_file(char *eof)
 		return (NULL);
 	tmp_name = gerate_tmp_heredoc_name();
 	if (!tmp_name)
-		return (perror("Error generating heredoc tmp filename"), NULL);
+		return (ft_free((void **)&buffer),
+			perror("Error generating heredoc tmp filename"), NULL);
 	tmp_file = open(tmp_name, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (tmp_file == -1)
-		return (ft_free((void **)tmp_name),
+		return (ft_free((void **)&buffer), ft_free((void **)tmp_name),
 			perror("Error opening here_doc tmp file"), NULL);
 	write(tmp_file, buffer, ft_strlen(buffer));
+	if (close(tmp_file))
+		return (ft_free((void **)&buffer), ft_free((void **)&tmp_name),
+			perror("Error closing here_doc tmp file"), NULL);
 	ft_free((void **)&buffer);
 	return (tmp_name);
 }

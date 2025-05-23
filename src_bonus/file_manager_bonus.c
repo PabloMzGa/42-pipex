@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   file_manager.c                                     :+:      :+:    :+:   */
+/*   file_manager_bonus.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 19:10:05 by pablo             #+#    #+#             */
-/*   Updated: 2025/05/22 22:05:05 by pablo            ###   ########.fr       */
+/*   Updated: 2025/05/22 22:17:53 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
 int	set_infile(char file[])
 {
@@ -35,11 +35,20 @@ int	set_infile(char file[])
 	return (0);
 }
 
-int	set_outfile(char file[])
+void	remove_heredoc_tmp_file(char *filename)
+{
+	if (unlink(filename) != 0)
+		perror("Error removing heredoc temp file");
+}
+
+int	set_outfile(char file[], char append)
 {
 	int	file_fd;
 
-	file_fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (append)
+		file_fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	else
+		file_fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (file_fd == -1)
 	{
 		perror("Error opening outfile");

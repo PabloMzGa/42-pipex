@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 13:33:49 by pablo             #+#    #+#             */
-/*   Updated: 2025/05/15 18:06:47 by pabmart2         ###   ########.fr       */
+/*   Updated: 2025/05/22 22:12:21 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,80 +19,49 @@
 # include <unistd.h>
 
 /**
- * @struct s_pipex_info
- * @brief Structure to store information required for pipex execution.
+ * @brief Closes both ends of a pipe and frees the associated memory
  *
- * @param s_pipex_info
- * Index or counter used during pipex operations.
+ * This function closes both file descriptors in a pipe array and then frees
+ * the memory allocated for the pipe. If any close operation fails, an error
+ * message is displayed.
  *
- * @param s_pipex_info
- * 2D array of integers representing file descriptors for pipes.
+ * @param pipe_fds Pointer to an array containing pipe file descriptors
+ *                 [0] is the read end and [1] is the write end
  *
- * @param s_pipex_info
- * Array of strings containing possible executable paths.
+ * @note The function will attempt to close both pipe ends even if one fails
+ * @note The pipe_fds memory is freed regardless of close operation status
  */
-typedef struct s_pipex_info
-{
-	int		i;
-	int		**pipes;
-	char	**paths;
-	char	*heredoc_tmp_file;
-}			t_pinfo;
-
-void		clean_pinfo(t_pinfo *pinfo);
+void	clean_pipe(int *pipe_fds);
 
 /**
- * @brief Cleans up and closes an array of pipes.
+ * @brief Creates a new pipe and allocates memory for its file descriptors
  *
- * This function iterates through an array of pipes,
-	closing both ends of each pipe
- * and freeing the associated memory. If any `close` operation fails, it sets a
- * status flag and reports a fatal error using `ft_perror`.
+ * This function allocates memory for two integers to store the read and write
+ * file descriptors of a pipe, then initializes the pipe using the system
+ * pipe() call.
  *
- * @param pipes A pointer to an array of integer pointers, where each element
- *              represents a pipe (an array of two file descriptors).
- *
- * @note The function assumes that the `pipes` array is NULL-terminated.
- *       It also frees the memory allocated for the `pipes` array itself.
- *       If any error occurs while closing the pipes, the program will terminate
- *       with an error message.
+ * @return A pointer to an array of two integers containing the pipe file
+ *         descriptors [0] for reading, [1] for writing, or NULL if an error
+ *         occurred
+ * @note The caller is responsible for freeing the returned memory when no
+ *       longer needed
+ * @note In case of failure, appropriate error messages are printed to stderr
  */
-void		clean_pipes(int **pipes);
+int		*create_pipe(void);
 
 /**
- * @brief Creates a specified number of pipes and allocates memory for them.
+ * @brief Executes either the first or last command in a pipeline
  *
- * Allocates memory for an array of pipes and initializes each pipe using the
- * `pipe()` system call. If memory allocation or pipe creation fails, it cleans
- * up any previously allocated resources and returns an error.
+ * This function determines which command execution function to call based on
+ * the value of i. If i is 2, it executes the first command in the pipeline.
+ * Otherwise, it executes the last command.
  *
- * @param pipes A pointer to an array of integer pointers where each element
-
-	*              represents a pipe (an array of two integers for read/write ends).
- * @param n_pipes The number of pipes to create.
- *
- * @return 0 on success, 1 on failure. On failure, an error message is printed
- *         using `perror()` and previously allocated resources are freed.
- *
- * @note The caller must free the allocated memory for the pipes using the
- *       `clean_pipes()` function after use.
+ * @param argv Array of command line arguments
+ * @param paths Array of possible paths to search for executables
+ * @param pipe_fds Array of pipe file descriptors for input/output redirection
+ * @param i Index determining which command to execute (2 for first, other for last)
  */
-int			create_pipes(int **pipes, size_t n_pipes);
-
-/**
- * @brief Executes a command based on its position in a pipeline.
- *
- * Determines whether the command is the first, middle, or last in a sequence
- * of piped commands and calls the appropriate execution function. Handles
- * cleanup of allocated resources such as paths and pipes.
- *
- * @param pinfo Pointer to a t_pinfo structure where process information will
- *              be stored or updated.
- * @param argv Array of command-line arguments.
- * @note Assumes that pipes and paths are already set up. Frees paths and
- *       cleans up pipes after execution.
- */
-void		execute_cmd(t_pinfo *pinfo, char *argv[]);
+void	execute_cmd(char *argv[], char **paths, int *pipe_fds, int i);
 
 /**
  * @brief Resolves the full path of a command by searching in the given paths.
@@ -113,79 +82,28 @@ void		execute_cmd(t_pinfo *pinfo, char *argv[]);
  * @return A string containing the full path of the command if found, or NULL
  *         if an error occurs. The returned string must be freed by the caller.
  */
-char		*get_cmd_path(char command[], char **paths);
+char	*get_cmd_path(char command[], char **paths);
 
 /**
- * @brief Executes a loop to fork processes and handle commands.
+ * @brief Creates and manages child processes to execute commands in a pipeline
  *
- * This function performs the following steps:
+ * This function iterates through the command arguments, creating a child
+ * process for each command using handle_fork(). It first extracts and splits
+ * the PATH environment variable to locate executables. After creating all
+ * needed child processes, it cleans up resources and waits for all child
+ * processes to complete.
  *
- * - Splits the PATH environment variable into an array of paths.
+ * @param argc Number of command-line arguments
+ * @param argv Array of command-line arguments where commands start at index 2
+ * @param pipe_fds Array of pipe file descriptors for inter-process
+ *                 communication
  *
- * - Checks if the first argument is "here_doc" to adjust the starting index.
- *
- * - Iterates through commands, forking a process for each and handling it.
- *
- * - Cleans up resources such as pipes and the paths array.
- *
- * - Waits for all child processes to finish and returns their status.
- *
- * @param argc The argument count passed to the program.
- * @param argv The argument vector containing command-line arguments.
- * @param pipes A double pointer to an array of pipes used for inter-process
- *              communication.
- *
- * @return The status of the child processes after they have all completed.
- *
- * @note If an error occurs while retrieving the PATH or during resource
- *       allocation, the function cleans up and exits with a failure status.
+ * @return Returns the status from wait_childs() which handles process
+ *         completion
+ * @note The function assumes commands start at argv[2] and continue until
+ *       argv[argc-2]
  */
-int			fork_loop(int argc, char *argv[], int **pipes);
-
-/**
- * @brief Reads input from stdin until a specified EOF string is encountered.
- *
- * Continuously prompts the user with "heredoc >" and reads lines from stdin.
- * Lines are appended to a buffer until a line matching the EOF string is
- * encountered. The EOF comparison uses `ft_strncmp`. Returns the buffer
- * excluding the EOF line.
- *
- * @param eof The string marking the end of input (EOF).
- * @param eof_size The length of the EOF string.
- * @return A pointer to the buffer with input lines, or NULL on error.
- *
- * @note Memory:
- *
- * - Dynamically allocates memory for the buffer and strings.
- *
- * - Frees memory on errors or successful completion.
- *
- * Errors:
- *
- * - On read or join errors, frees memory, prints an error with `perror`,
- *   and returns NULL.
- */
-char		*heredoc(char *eof, size_t eof_size);
-
-void		remove_heredoc_tmp_file(char *filename);
-
-/**
-	* @brief Creates a temporary file containing heredoc input.
-	*
-	* Reads input from the user until the specified EOF delimiter is encountered,
-	* writes the input to a newly generated temporary file,
-		and returns the name
-	* of the file. Handles memory allocation, file creation,
-		and error reporting.
-	*
-	* @param eof The end-of-file delimiter string for the heredoc.
-	* @return On success, returns the name of the temporary file (char *).
-	*         On failure,
-		returns NULL or 1 depending on the error encountered.
-	*/
-char		*set_heredoc_tmp_file(char *eof);
-
-t_pinfo		*set_pinfo(int **pipes);
+int	fork_loop(int argc, char *argv[], int *pipe_fds);
 
 /**
  * @brief Sets the specified file as the standard input (stdin) for the process.
@@ -202,29 +120,39 @@ t_pinfo		*set_pinfo(int **pipes);
  * @note This function modifies the standard output (stdout) of the process, so
  *       subsequent writes to stdout will write to the specified file.
  */
-int			set_infile(char file[]);
+int		set_infile(char file[]);
 
 /**
- * @brief Sets the specified file as the standard output (STDOUT).
+ * @brief Sets up a file as the standard output
  *
- * Opens the given file with the specified mode (append or truncate),
- * duplicates its file descriptor to STDOUT_FILENO, and closes the
- * original file descriptor. If any operation fails, an error message
- * is printed to stderr using perror, and the function returns an error
- * code.
+ * This function opens the specified file for writing (creating it if it doesn't
+ * exist or truncating it if it does), and redirects the standard output to
+ * write to this file by duplicating the file descriptor.
  *
- * @param file The path to the file to be used as the output.
- * @param append A flag indicating whether to append to the file
- *               (non-zero value) or truncate the file (zero value).
- * @return int Returns 0 on success, or 1 if an error occurs.
- *
- * @note The file is created if it does not exist, with permissions
- *       set to 0644. If the file cannot be opened, duplicated, or
- *       closed, an error message is printed, and the function
- *       returns an error code.
+ * @param file Path to the output file
+ * @return 0 on success, 1 on failure with error message printed to stderr
  */
-int			set_outfile(char file[], char append);
+int		set_outfile(char file[]);
 
-int			wait_childs(pid_t last_pid, t_pinfo *pinfo);
+/**
+ * @brief Waits for all child processes to terminate and collects the exit
+ *        status of a specific child process.
+ *
+ * This function waits for all child processes to finish their execution,
+ * but only returns the exit status of the child process identified by
+ * last_pid. If the specified process terminated normally, its exit code
+ * is returned. If it terminated due to a signal, the signal value is
+ * returned.
+ *
+ * @param last_pid The PID of the child process whose exit status should be
+ *                 returned
+ *
+ * @return The exit status of the child process specified by last_pid,
+ *         or 0 if the specified process was not found
+ *
+ * @note Prints an error message if waitpid fails for any reason other
+ *       than having no more children to wait for (ECHILD).
+ */
+int		wait_childs(pid_t last_pid);
 
 #endif

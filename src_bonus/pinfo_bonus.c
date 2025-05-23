@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pinfo.c                                            :+:      :+:    :+:   */
+/*   pinfo_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 17:10:22 by pabmart2          #+#    #+#             */
-/*   Updated: 2025/05/15 17:13:07 by pabmart2         ###   ########.fr       */
+/*   Updated: 2025/05/22 22:18:08 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
 void	clean_pinfo(t_pinfo *pinfo)
 {
@@ -19,7 +19,7 @@ void	clean_pinfo(t_pinfo *pinfo)
 	if (pinfo->pipes)
 		clean_pipes(pinfo->pipes);
 	if (pinfo->heredoc_tmp_file)
-		free(pinfo->heredoc_tmp_file);
+		ft_free((void **)(&pinfo->heredoc_tmp_file));
 	ft_free((void **)&pinfo);
 }
 

@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cmd_resolver.c                                     :+:      :+:    :+:   */
+/*   cmd_resolver_bonus.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 12:50:33 by pablo             #+#    #+#             */
-/*   Updated: 2025/05/22 19:53:01 by pablo            ###   ########.fr       */
+/*   Updated: 2025/05/22 22:17:44 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
 /**
  * @brief Handles errors related to resolving the command path.

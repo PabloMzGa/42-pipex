@@ -9,7 +9,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${fileDirname}/${fileBasenameNoExtension}.out", // Adjust this to match your output executable
-      "args": ["here_doc", "EOF", "cat -e", "cat -e", "outfiles/outfile"],
+      "args": ["infilee", "cat -e", "cat -e", "outfile"],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],
