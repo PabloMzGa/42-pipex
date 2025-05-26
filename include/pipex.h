@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 13:33:49 by pablo             #+#    #+#             */
-/*   Updated: 2025/05/22 22:12:21 by pablo            ###   ########.fr       */
+/*   Updated: 2025/05/26 19:28:59 by pabmart2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,8 @@ int		*create_pipe(void);
  * @param argv Array of command line arguments
  * @param paths Array of possible paths to search for executables
  * @param pipe_fds Array of pipe file descriptors for input/output redirection
- * @param i Index determining which command to execute (2 for first, other for last)
+ * @param i Index determining which command to execute (2 for first, other for
+ *          last)
  */
 void	execute_cmd(char *argv[], char **paths, int *pipe_fds, int i);
 
@@ -103,7 +104,7 @@ char	*get_cmd_path(char command[], char **paths);
  * @note The function assumes commands start at argv[2] and continue until
  *       argv[argc-2]
  */
-int	fork_loop(int argc, char *argv[], int *pipe_fds);
+int		fork_loop(int argc, char *argv[], int *pipe_fds);
 
 /**
  * @brief Sets the specified file as the standard input (stdin) for the process.

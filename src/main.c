@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 11:59:19 by pablo             #+#    #+#             */
-/*   Updated: 2025/05/22 21:37:19 by pablo            ###   ########.fr       */
+/*   Updated: 2025/05/26 19:32:42 by pabmart2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,12 @@
 
 int	main(int argc, char *argv[])
 {
-	int *pipe_fds;
+	int	*pipe_fds;
+
 	if (argc < 5)
 		ft_perror("Not enough arguments", EINVAL, EXIT_FAILURE);
 	else if (argc > 5)
-		ft_perror ("Too many arguments", EINVAL, EXIT_FAILURE);
+		ft_perror("Too many arguments", EINVAL, EXIT_FAILURE);
 	pipe_fds = create_pipe();
 	if (!pipe_fds)
 		ft_perror("Error creating pipes", 0, EXIT_FAILURE);

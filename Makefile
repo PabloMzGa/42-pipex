@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: pablo <pablo@student.42.fr>                +#+  +:+       +#+         #
+#    By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/20 14:34:30 by pabmart2          #+#    #+#              #
-#    Updated: 2025/05/23 11:37:59 by pablo            ###   ########.fr        #
+#    Updated: 2025/05/26 19:28:18 by pabmart2         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -55,11 +55,12 @@ BONUS_INCLUDES = \
 all: $(NAME)
 
 clean:
-	@rm -rf $(OBJ_DIR)
+	@rm -rf $(OBJ_DIR) $(BONUS_OBJ_DIR)
 	@echo "\033[31mObject files removed\033[0m"
 
 fclean: clean
 	@rm -f $(BUILD_DIR)/$(NAME)
+	@rm -f $(BONUS_BUILD_DIR)/$(NAME)
 	@$(MAKE) -C lib/libft fclean
 	@echo "\033[31m$(NAME) removed\033[0m"
 
