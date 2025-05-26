@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_resolver_bonus.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 12:50:33 by pablo             #+#    #+#             */
-/*   Updated: 2025/05/22 22:17:44 by pablo            ###   ########.fr       */
+/*   Updated: 2025/05/26 21:03:58 by pabmart2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,6 @@ static char	*get_abosulte_cmd(char **splitted_args)
 	size_t	i;
 	char	*cmd;
 
-	fprintf(stderr, "Ejecutando cmd absoluto\n");
 	i = 1;
 	cmd = splitted_args[0];
 	while (splitted_args[i])

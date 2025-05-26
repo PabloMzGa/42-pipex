@@ -9,7 +9,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${fileDirname}/${fileBasenameNoExtension}.out", // Adjust this to match your output executable
-      "args": ["infilee", "cat -e", "cat -e", "outfile"],
+      "args": ["infile", "./test.out", "cat -e", "outfile"],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],
@@ -21,11 +21,11 @@
           "text": "-enable-pretty-printing",
           "ignoreFailures": true
         },
-/*         {
+        {
           "description": "Follow forked processes",
           "text": "set follow-fork-mode child", // Sigue al proceso hijo tras fork
           "ignoreFailures": true
-        } */
+        }
       ],
       "preLaunchTask": "build all C and A files"
     }

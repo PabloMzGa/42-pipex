@@ -6,7 +6,7 @@
 #    By: pabmart2 <pabmart2@student.42malaga.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/20 14:34:30 by pabmart2          #+#    #+#              #
-#    Updated: 2025/05/26 19:28:18 by pabmart2         ###   ########.fr        #
+#    Updated: 2025/05/26 21:02:43 by pabmart2         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,14 +20,14 @@ BONUS_OBJ_DIR = build_bonus/obj
 NAME = pipex
 
 BONUS_SRC = \
-	src_bonus/cmd_resolver_bonus.c \
-	src_bonus/execution_bonus.c \
-	src_bonus/file_manager_bonus.c \
-	src_bonus/fork_bonus.c \
-	src_bonus/heredoc_bonus.c \
-	src_bonus/main_bonus.c \
-	src_bonus/pinfo_bonus.c \
-	src_bonus/utils_bonus.c \
+	bonus/src_bonus/cmd_resolver_bonus.c \
+	bonus/src_bonus/execution_bonus.c \
+	bonus/src_bonus/file_manager_bonus.c \
+	bonus/src_bonus/fork_bonus.c \
+	bonus/src_bonus/heredoc_bonus.c \
+	bonus/src_bonus/main_bonus.c \
+	bonus/src_bonus/pinfo_bonus.c \
+	bonus/src_bonus/utils_bonus.c \
 
 BONUS_OBJ = $(addprefix $(BONUS_OBJ_DIR)/, $(BONUS_SRC:.c=.o))
 
@@ -49,7 +49,7 @@ INCLUDES = \
 	-Ilib/libft/include
 
 BONUS_INCLUDES = \
-	-Iinclude_bonus \
+	-Ibonus/include_bonus \
 	-Ilib/libft/include
 
 all: $(NAME)
